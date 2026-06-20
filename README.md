@@ -1,6 +1,41 @@
 # Skill Lifecycle Manager
 
-A practical toolkit for managing hundreds of Claude Code skills without losing track.
+![Skill Lifecycle Manager — Route, Track, Evolve](assets/hero.png)
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Python 3.9+](https://img.shields.io/badge/Python-3.9+-green.svg)](https://python.org)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-blueviolet.svg)](https://docs.anthropic.com/en/docs/claude-code)
+[![Skills](https://img.shields.io/badge/Manages-800+_Skills-orange.svg)](#architecture)
+[![GitHub stars](https://img.shields.io/github/stars/Evgeniy-Mikhailove/skill-lifecycle?style=social)](https://github.com/Evgeniy-Mikhailove/skill-lifecycle/stargazers)
+
+**Stop losing skills in a sea of INDEX.md entries.** Find the right one in seconds, track what works, and let skills learn from your experience.
+
+> **Works with:** Claude Code, Codex CLI, Gemini CLI, and any AI agent that uses markdown-based skills.
+> **Zero dependencies** beyond Python 3.9+. No frameworks, no cloud services, just files and scripts.
+
+---
+
+### Before
+
+You have 200 skills in INDEX.md. A task comes in. You scroll... guess... pick one... hope it works. Three months later, you install the same skill twice because you forgot it existed.
+
+### After
+
+```
+$ python skill_router.py "set up CI/CD pipeline with Docker"
+
+DIRECT (apply now):
+  1. cicd-quick-setup [devops-cicd] (score: 60.0)
+  2. ci-cd-automation [devops-cicd] (score: 48.0)
+
+POTENTIAL (next steps):
+  1. test-driven-development [code-quality] (score: 12.0)
+  2. security-and-hardening [review-debug-security] (score: 5.0)
+```
+
+5 matches + 5 next steps. 0.2 seconds. Every skill categorized, tracked, and growing smarter with use.
+
+---
 
 ## The Problem
 
@@ -360,6 +395,14 @@ Only `skill_evolve.py` does — and only by appending `## Lessons Learned` or `#
 
 **What about skill packages from third parties?**
 Clone them into your skills directory, then register as a package in `REGISTRY.json`. The router will search their `index.json` automatically.
+
+## Documentation
+
+- [Getting Started](docs/getting-started.md) — installation, first run, daily workflow
+- [Architecture](docs/architecture.md) — how routing, scoring, and evolution work internally
+- [Lifecycle Protocol](SKILL_LIFECYCLE_PROTOCOL.md) — the full 7-stage methodology
+- [Contributing](CONTRIBUTING.md) — how to help improve the project
+- [Changelog](CHANGELOG.md) — version history
 
 ## License
 
