@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0] - 2026-06-24
+
+### Added
+- 6-tier model routing: Haiku -> Gemini -> GPT Codex -> Sonnet -> Fable -> Opus
+- Cross-provider support: Anthropic, OpenAI, Google in one routing table
+- Task-to-model decision matrix with cost tiers
+- Escalation policy with automatic tier progression
+- Models badge in README
+
+### Changed
+- Router now suggests optimal model alongside skill matches
+- README updated with model routing documentation
+
 ## [1.1.0] - 2026-06-20
 
 ### Added

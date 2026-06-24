@@ -6,6 +6,7 @@
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-green.svg)](https://python.org)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-blueviolet.svg)](https://docs.anthropic.com/en/docs/claude-code)
 [![Skills](https://img.shields.io/badge/Manages-800+_Skills-orange.svg)](#architecture)
+[![Models](https://img.shields.io/badge/Models-6_Tier_Routing-blue.svg)](#6-tier-model-routing-v11)
 [![GitHub stars](https://img.shields.io/github/stars/Evgeniy-Mikhailove/skill-lifecycle?style=social)](https://github.com/Evgeniy-Mikhailove/skill-lifecycle/stargazers)
 
 **Stop losing skills in a sea of INDEX.md entries.** Find the right one in seconds, track what works, and let skills learn from your experience.
@@ -283,6 +284,42 @@ Canvas built: ~/vault/skill-map.canvas
 ```
 
 Open it in Obsidian to see all 14 groups with connections between related domains.
+
+## 6-Tier Model Routing (v1.1)
+
+Skills don't just match tasks - they route to the optimal model. The router now supports 6 cost tiers across 3 providers:
+
+| Tier | Model | Provider | Cost | Best For |
+|------|-------|----------|------|----------|
+| 1 | Haiku 4.5 | Anthropic | $1/$5 per MTok | Classification, tagging, validation, routing |
+| 2 | Gemini 2.5 Pro | Google | Low | Summarization, extraction, translation, broad context |
+| 3 | GPT-5.3 Codex | OpenAI | Low-Med | Focused coding, refactoring, tests |
+| 4 | Sonnet 4.6 | Anthropic | $3/$15 per MTok | Standard engineering, debugging, multilingual content |
+| 5 | Fable 5 | Anthropic | $10/$50 per MTok | Narrative, storytelling, creative brainstorm |
+| 6 | Opus 4.8 | Anthropic | $5/$25 per MTok | Architecture, security, root cause analysis |
+
+### Escalation Policy
+
+```
+haiku (gate-keeping)
+  -> gemini / openai (by task type)
+    -> sonnet (main workhorse)
+      -> fable (if creative)
+      -> opus (if risky / deep architecture)
+```
+
+Each skill in the registry can specify a preferred model tier. The router uses the skill's group and priority to suggest the right model alongside the skill match.
+
+### Task-to-Model Quick Reference
+
+| Task | Model | Why |
+|------|-------|-----|
+| "Is this a bug or feature?" | Haiku | Binary classification, instant |
+| "Summarize this 50-page doc" | Gemini | Large context, cheap |
+| "Write a Python function for X" | GPT Codex | Code-optimized |
+| "Debug this n8n workflow" | Sonnet | Context understanding |
+| "Write a story for newsletter" | Fable | Built for narrative |
+| "Design the auth architecture" | Opus | Deep reasoning needed |
 
 ## Architecture
 
