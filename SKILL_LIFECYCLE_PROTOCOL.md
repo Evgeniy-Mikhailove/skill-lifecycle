@@ -13,11 +13,28 @@ Before non-trivial work, run `skill_router.py "<task>"`. It returns 5 direct mat
 ### 3. APPLY
 Use the skill methodology. Don't announce which skill you're using — just follow its steps.
 
-### 4. LOG
-After applying a skill, log the outcome: `success`, `adjusted`, or `failed`. This builds data for understanding which skills actually work.
+### 4. LOG + ADAPT (mandatory, not optional)
+After applying a skill, evaluate the outcome and act accordingly:
+
+| Outcome | What happened | Action |
+|---------|--------------|--------|
+| `success` | Skill worked as documented | `skill_usage.py log <id> "<task>" success` |
+| `adjusted` | Skill needed changes to work | **First** `skill_evolve.py learn <id> "<problem>" "<solution>"`, **then** `skill_usage.py log <id> "<task>" adjusted` |
+| `failed` | Skill didn't help, used different approach | **First** `skill_evolve.py learn <id> "<problem>" "<alternative>"`, **then** `skill_usage.py log <id> "<task>" failed` |
+
+**Critical rule:** every `adjusted` or `failed` outcome MUST include a `skill_evolve.py learn` call before logging. An outcome without a lesson = lost experience.
+
+Triggers that require writing to the skill:
+- An approach from the skill did not work and a different solution was found
+- An additional step was discovered that strengthens the skill
+- A limitation was found that the skill does not warn about
+- An API/library/tool referenced in the skill has changed
+- A workaround was needed that future users should know about
 
 ### 5. EVOLVE
-When you hit a problem and find a solution — record it in the skill with `skill_evolve.py learn`. When an approach becomes outdated — mark it with `skill_evolve.py deprecate`. Skills grow smarter over time.
+Lessons accumulate in each skill's SKILL.md under `## Lessons Learned`. Outdated approaches get marked with `skill_evolve.py deprecate`. Skills grow smarter with every session.
+
+**Important:** This stage does not work automatically. The AI agent must be instructed to perform it via CLAUDE.md. See [docs/claude-md-setup.md](docs/claude-md-setup.md) for the required CLAUDE.md configuration.
 
 ### 6. RECOMMEND
 After completing complex work, run `skill_router.py --post-task` to see what adjacent skills could improve or extend the result.

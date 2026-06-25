@@ -4,7 +4,6 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9+-green.svg)](https://python.org)
-[![Claude Code](https://img.shields.io/badge/Claude_Code-Compatible-blueviolet.svg)](https://docs.anthropic.com/en/docs/claude-code)
 [![Skills](https://img.shields.io/badge/Manages-800+_Skills-orange.svg)](#architecture)
 [![Models](https://img.shields.io/badge/Models-6_Tier_Routing-blue.svg)](#6-tier-model-routing-v11)
 [![GitHub stars](https://img.shields.io/github/stars/Evgeniy-Mikhailove/skill-lifecycle?style=social)](https://github.com/Evgeniy-Mikhailove/skill-lifecycle/stargazers)
@@ -382,25 +381,54 @@ If you run multiple AI agents (e.g., Claude Code + Codex, or a team of specializ
 
 See `SKILL_LIFECYCLE_PROTOCOL.md` for the full cross-agent coordination spec.
 
-## CLAUDE.md Integration
+## CLAUDE.md Integration (CRITICAL)
 
-Add this to your project or global `CLAUDE.md` to activate automatic routing:
+**Skills only learn if your CLAUDE.md enforces the adaptation pattern.** Without this, `skill_evolve.py` exists but never gets called - and experience is lost.
+
+Add the following to your project or global `CLAUDE.md`. This is not optional configuration - it is the behavioral contract that makes skills evolve.
+
+Full setup guide with copy-paste blocks: **[docs/claude-md-setup.md](docs/claude-md-setup.md)**
+
+Quick version - add these two sections to your `CLAUDE.md`:
 
 ```markdown
-## Skill Auto-Routing
+## Skill Auto-Routing (REQUIRED)
 
 For every non-trivial task:
 1. Run `python ~/.claude/orchestration/skill_router.py "<task description>"`
 2. Apply DIRECT results silently (read their SKILL.md, follow the methodology)
 3. Keep POTENTIAL results in mind for the next step
+4. After the task - evaluate and log the outcome (see Skill Adaptation below)
 
-## Skill Lifecycle
+## Skill Adaptation (MANDATORY pattern)
 
-- Install: `python ~/.claude/orchestration/skill_register.py <path>`
-- Log usage: `python ~/.claude/orchestration/skill_usage.py log <id> "<task>" <outcome>`
-- Record lesson: `python ~/.claude/orchestration/skill_evolve.py learn <id> "<problem>" "<solution>"`
-- Health check: `python ~/.claude/orchestration/audit.py`
+After EVERY skill application, evaluate the result and act:
+
+1. Skill worked as-is -> `skill_usage.py log <id> "<task>" success` (silently)
+2. Skill needed adjustments -> FIRST `skill_evolve.py learn <id> "<what didn't work>" "<what we did instead>"`, THEN `skill_usage.py log <id> "<task>" adjusted`
+3. Skill didn't help -> FIRST `skill_evolve.py learn <id> "<problem>" "<alternative approach>"`, THEN `skill_usage.py log <id> "<task>" failed`
+
+Triggers that REQUIRE writing to the skill:
+- An approach from the skill did not work and a different solution was found
+- An additional step was discovered that strengthens the skill
+- A limitation was found that the skill does not warn about
+- An API/library/tool referenced in the skill has changed
+- A workaround was needed that future users should know about
+
+This is NOT optional. Every adjusted/failed without an evolve learn call = lost experience.
 ```
+
+### Why CLAUDE.md matters
+
+The scripts (`skill_evolve.py`, `skill_usage.py`) are just tools. They do nothing on their own. The **CLAUDE.md instructions** are what tell the AI agent _when_ to call them. Without the adaptation pattern in CLAUDE.md:
+- Skills get used but never improved
+- Workarounds are found but forgotten by next session
+- The same problems are solved repeatedly from scratch
+
+With the pattern in CLAUDE.md:
+- Every session that touches a skill potentially improves it
+- Lessons accumulate in SKILL.md files and benefit all future sessions
+- Skills become smarter over time instead of rotting
 
 ## Configuration
 
@@ -435,11 +463,12 @@ Clone them into your skills directory, then register as a package in `REGISTRY.j
 
 ## Documentation
 
-- [Getting Started](docs/getting-started.md) — installation, first run, daily workflow
-- [Architecture](docs/architecture.md) — how routing, scoring, and evolution work internally
-- [Lifecycle Protocol](SKILL_LIFECYCLE_PROTOCOL.md) — the full 7-stage methodology
-- [Contributing](CONTRIBUTING.md) — how to help improve the project
-- [Changelog](CHANGELOG.md) — version history
+- [Getting Started](docs/getting-started.md) - installation, first run, daily workflow
+- [CLAUDE.md Setup](docs/claude-md-setup.md) - **required** configuration to make skills learn from experience
+- [Architecture](docs/architecture.md) - how routing, scoring, and evolution work internally
+- [Lifecycle Protocol](SKILL_LIFECYCLE_PROTOCOL.md) - the full 7-stage methodology
+- [Contributing](CONTRIBUTING.md) - how to help improve the project
+- [Changelog](CHANGELOG.md) - version history
 
 ## License
 

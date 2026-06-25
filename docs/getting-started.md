@@ -46,11 +46,15 @@ This checks: are all registered skills actually on disk? Are there orphan skills
 
 ## Daily Workflow
 
-1. **Before a task** — run `skill_router.py "task description"` to find relevant skills
-2. **After a task** — run `skill_usage.py log <skill> "<task>" success|adjusted|failed`
-3. **When you find a workaround** — run `skill_evolve.py learn <skill> "<problem>" "<solution>"`
-4. **When installing a new skill** — run `skill_register.py <path>`
-5. **Periodically** — run `audit.py` to catch orphans and consistency issues
+1. **Before a task** - run `skill_router.py "task description"` to find relevant skills
+2. **After a task** - evaluate the outcome:
+   - Worked as-is: `skill_usage.py log <skill> "<task>" success`
+   - Needed adjustments: first `skill_evolve.py learn <skill> "<problem>" "<fix>"`, then `skill_usage.py log <skill> "<task>" adjusted`
+   - Didn't help: first `skill_evolve.py learn <skill> "<problem>" "<alternative>"`, then `skill_usage.py log <skill> "<task>" failed`
+3. **When installing a new skill** - run `skill_register.py <path>`
+4. **Periodically** - run `audit.py` to catch orphans and consistency issues
+
+**Key rule:** every `adjusted` or `failed` outcome must include a `skill_evolve.py learn` call. Without it, the experience from the session is lost.
 
 ## Configuration
 
@@ -64,17 +68,14 @@ By default, all paths are auto-detected from your `~/.claude/` directory. To ove
 }
 ```
 
-## Integrating with CLAUDE.md
+## Integrating with CLAUDE.md (CRITICAL STEP)
 
-Add this to your global `~/.claude/CLAUDE.md`:
+**Without CLAUDE.md configuration, skills will never adapt.** The scripts exist, but nothing tells the agent when to call them.
 
-```markdown
-## Skill Auto-Routing
+See the full setup guide: **[claude-md-setup.md](claude-md-setup.md)**
 
-For every non-trivial task:
-1. Run `python ~/.claude/orchestration/skill_router.py "<task description>"`
-2. Apply DIRECT results silently
-3. Keep POTENTIAL results in mind for the next step
-```
+Quick version - add two blocks to your `~/.claude/CLAUDE.md`:
+1. **Skill Auto-Routing** - tells the agent to find skills before each task
+2. **Skill Adaptation** - tells the agent to record lessons after each task
 
-This makes your AI agent automatically search for relevant skills on every task.
+This is what closes the feedback loop. Without it, you have tools but no behavior.
